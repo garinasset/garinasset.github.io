@@ -355,3 +355,38 @@ body.dark .social-github:hover {
         transition: none;
     }
 }
+
+.breadcrumb,
+.col-name,
+.col-size,
+.col-sha {
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.col-name {
+    overflow: visible;
+    text-overflow: clip;
+}
+
+.col-size {
+    width: min(96px, 17%);
+}
+
+.col-sha {
+    width: min(480px, 50%);
+}
+
+.file-link .col-sha {
+    font-size: 12px;
+}
+
+@media (max-width: 639px) {
+    .col-sha {
+        width: 40%;
+    }
+
+    .file-link .col-sha {
+        font-size: 10px;
+    }
+}
