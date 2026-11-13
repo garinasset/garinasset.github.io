@@ -1,12 +1,5 @@
 [
   {
-    "name": "updns",
-    "url": "https://github.com/garinasset/updns",
-    "description": "updns 是一个 OpenWrt 上的本地 DNS 服务器，提供灵活的 DNS 路由、 NFT set 联动，支持 DoT、DoH 且拥有强大的 主动预取、广告拦截 和 DNS 审计 能力。"
-  },
-  {
-    "name": "garinasset.github.io",
-    "url": "https://github.com/garinasset/garinasset.github.io",
-    "description": ""
+    "name": "updns"
   }
 ]

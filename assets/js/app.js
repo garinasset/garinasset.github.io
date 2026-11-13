@@ -1,114 +1,98 @@
-
 const fileList = document.getElementById('file-list');
+const loadingState = document.getElementById('loading-state');
 const emptyState = document.getElementById('empty-state');
 const errorState = document.getElementById('error-state');
 const themeRoot = document.getElementById('theme-root');
 const themeToggle = document.getElementById('theme-toggle');
-
-document.getElementById('current-year').textContent = new Date().getFullYear();
-
-// Theme Management
 const THEME_KEY = 'theme-preference';
+const HOME_REPOSITORY = 'garinasset.github.io';
+const REPOSITORY_NAME = /^(?!\.{1,2}$)[a-zA-Z0-9._-]+$/;
 
-function getStoredTheme() {
-    return localStorage.getItem(THEME_KEY) || 'light';
+function applyTheme(theme) {
+    themeRoot.classList.toggle('dark', theme === 'dark');
+    themeRoot.classList.toggle('light', theme !== 'dark');
+    themeToggle.setAttribute('aria-pressed', String(theme === 'dark'));
 }
 
-function setTheme(theme) {
-    localStorage.setItem(THEME_KEY, theme);
-    themeRoot.className = theme;
+try {
+    applyTheme(localStorage.getItem(THEME_KEY) === 'dark' ? 'dark' : 'light');
+} catch (error) {
+    console.warn('Theme preference storage is unavailable:', error);
+    applyTheme('light');
 }
 
-function toggleTheme() {
-    const current = getStoredTheme();
-    const newTheme = current === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
-}
-
-// Initialize theme
-setTheme(getStoredTheme());
-themeToggle.addEventListener('click', toggleTheme);
-
-/**
- * Render repositories as directory items
- */
-function renderRepositories(repositories) {
-    fileList.replaceChildren();
-
-    if (repositories.length === 0) {
-        emptyState.hidden = false;
-        errorState.hidden = true;
-        return;
+themeToggle.addEventListener('click', () => {
+    const theme = themeRoot.classList.contains('dark') ? 'light' : 'dark';
+    applyTheme(theme);
+    try {
+        localStorage.setItem(THEME_KEY, theme);
+    } catch (error) {
+        console.warn('Unable to save theme preference:', error);
     }
+});
 
-    emptyState.hidden = true;
-    errorState.hidden = true;
-
+function renderRepositories(repositories) {
     const fragment = document.createDocumentFragment();
 
-    repositories.forEach(repo => {
-        const item = document.createElement('div');
-        item.className = 'file-item';
-
+    for (const repo of repositories) {
+        const item = document.createElement('li');
         const link = document.createElement('a');
-        link.href = `${repo.name}/`;
-        link.rel = 'noopener noreferrer';
+        link.className = 'file-link';
+        link.href = `https://downloads.garinasset.com/${encodeURIComponent(repo.name)}/`;
 
-        const icon = document.createElement('div');
-        icon.className = 'file-icon';
-        icon.textContent = '📁';
+        const icon = document.createElement('i');
+        icon.className = 'fa-solid fa-folder file-icon';
+        icon.setAttribute('aria-hidden', 'true');
 
-        const name = document.createElement('div');
-        name.className = 'file-name';
+        const name = document.createElement('span');
+        name.className = 'col-name';
         name.textContent = repo.name;
+        name.title = repo.name;
 
-        const sha = document.createElement('div');
-        sha.className = 'file-sha';
-        sha.textContent = '—';
+        const size = document.createElement('span');
+        size.className = 'col-size';
+        size.textContent = '\u2014';
 
-        link.appendChild(icon);
-        link.appendChild(name);
-        link.appendChild(sha);
-        item.appendChild(link);
-        fragment.appendChild(item);
-    });
+        const sha = document.createElement('span');
+        sha.className = 'col-sha';
+        sha.textContent = '\u2014';
 
-    fileList.appendChild(fragment);
+        link.append(icon, name, size, sha);
+        item.append(link);
+        fragment.append(item);
+    }
+
+    fileList.replaceChildren(fragment);
+    emptyState.hidden = repositories.length !== 0;
 }
 
-/**
- * Load repositories from repositories.json
- */
 async function loadRepositories() {
     try {
-        const response = await fetch('./repositories.json?t=' + Date.now(), {
-            cache: 'no-store'
-        });
-
+        const response = await fetch('./repositories.json', { cache: 'no-store' });
         if (!response.ok) {
-            throw new Error('Unable to load repository index');
+            throw new Error(`Unable to load repository index: HTTP ${response.status}`);
         }
 
         const data = await response.json();
-
-        if (!Array.isArray(data)) {
+        if (!Array.isArray(data) || data.some(repo =>
+            !repo || typeof repo.name !== 'string' || !REPOSITORY_NAME.test(repo.name)
+        )) {
             throw new Error('Invalid repository index');
         }
 
-        // Sort by name
-        const sorted = data.sort((a, b) =>
-            (a.name || '').localeCompare(b.name || '')
-        );
-
-        renderRepositories(sorted);
-
+        const repositories = data
+            .filter(repo => repo.name.toLowerCase() !== HOME_REPOSITORY)
+            .sort((a, b) => a.name.localeCompare(b.name, 'en'));
+        renderRepositories(repositories);
+        errorState.hidden = true;
     } catch (error) {
-        console.error(error);
+        console.error('Unable to load repository directory:', error);
         fileList.replaceChildren();
         emptyState.hidden = true;
         errorState.hidden = false;
+    } finally {
+        loadingState.hidden = true;
     }
 }
 
-// Load repositories on page load
 loadRepositories();
