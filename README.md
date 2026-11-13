@@ -28,6 +28,9 @@ The single [deployment workflow](.github/workflows/deploy.yml) runs on pushes to
 `main`, every six hours, and manually via **Actions > Deploy Website > Run workflow**.
 It tests the scanner, builds a fresh repository index, and uploads only the built
 site. It does not commit generated data or require contents-write permission.
+The published root includes ICO, SVG, and PNG favicons, the Apple touch icon,
+and the web manifest with both of its PNG icons. HTML declares their formats
+and sizes; browsers choose the supported favicon without a prefetch hint.
 
 [The scanner](.github/scripts/build-index.mjs) paginates the GitHub repository API,
 checks ownership, public visibility, and `has_pages`, and excludes the homepage.
