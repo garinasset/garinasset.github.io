@@ -1,175 +1,114 @@
 
-const directory = document.getElementById(
-    "repository-directory"
-);
+const fileList = document.getElementById('file-list');
+const emptyState = document.getElementById('empty-state');
+const errorState = document.getElementById('error-state');
+const themeRoot = document.getElementById('theme-root');
+const themeToggle = document.getElementById('theme-toggle');
 
-const searchInput = document.getElementById(
-    "repository-search"
-);
+document.getElementById('current-year').textContent = new Date().getFullYear();
 
-const repositoryCount = document.getElementById(
-    "repository-count"
-);
+// Theme Management
+const THEME_KEY = 'theme-preference';
 
-const emptyState = document.getElementById(
-    "empty-state"
-);
-
-const errorState = document.getElementById(
-    "error-state"
-);
-
-document.getElementById("current-year").textContent =
-    new Date().getFullYear();
-
-let repositories = [];
-
-/**
- * Validate repository URL.
- * Only allow links to github.com.
- */
-function isValidRepositoryUrl(value) {
-    try {
-        const url = new URL(value);
-
-        return (
-            url.protocol === "https:" &&
-            url.hostname === "github.com"
-        );
-    } catch {
-        return false;
-    }
+function getStoredTheme() {
+    return localStorage.getItem(THEME_KEY) || 'light';
 }
 
+function setTheme(theme) {
+    localStorage.setItem(THEME_KEY, theme);
+    themeRoot.className = theme;
+}
+
+function toggleTheme() {
+    const current = getStoredTheme();
+    const newTheme = current === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+}
+
+// Initialize theme
+setTheme(getStoredTheme());
+themeToggle.addEventListener('click', toggleTheme);
+
 /**
- * Render repository links.
+ * Render repositories as directory items
  */
-function renderRepositories(items) {
+function renderRepositories(repositories) {
+    fileList.replaceChildren();
 
-    directory.replaceChildren();
-
-    emptyState.hidden = items.length !== 0;
-
-    if (items.length === 0) {
+    if (repositories.length === 0) {
+        emptyState.hidden = false;
+        errorState.hidden = true;
         return;
     }
 
+    emptyState.hidden = true;
+    errorState.hidden = true;
+
     const fragment = document.createDocumentFragment();
 
-    items.forEach(repo => {
+    repositories.forEach(repo => {
+        const item = document.createElement('div');
+        item.className = 'file-item';
 
-        if (
-            !repo ||
-            typeof repo.name !== "string" ||
-            typeof repo.url !== "string" ||
-            !isValidRepositoryUrl(repo.url)
-        ) {
-            return;
-        }
+        const link = document.createElement('a');
+        link.href = `${repo.name}/`;
+        link.rel = 'noopener noreferrer';
 
-        const link = document.createElement("a");
+        const icon = document.createElement('div');
+        icon.className = 'file-icon';
+        icon.textContent = '📁';
 
-        link.className = "repository-card";
-        link.href = repo.url;
-        link.target = "_blank";
-        link.rel = "noopener noreferrer";
-
-        const name = document.createElement("span");
-
-        name.className = "repository-name";
+        const name = document.createElement('div');
+        name.className = 'file-name';
         name.textContent = repo.name;
 
-        const arrow = document.createElement("span");
+        const sha = document.createElement('div');
+        sha.className = 'file-sha';
+        sha.textContent = '—';
 
-        arrow.className = "repository-arrow";
-        arrow.textContent = "↗";
-
+        link.appendChild(icon);
         link.appendChild(name);
-        link.appendChild(arrow);
-
-        fragment.appendChild(link);
+        link.appendChild(sha);
+        item.appendChild(link);
+        fragment.appendChild(item);
     });
 
-    directory.appendChild(fragment);
-
-    emptyState.hidden =
-        directory.children.length !== 0;
+    fileList.appendChild(fragment);
 }
 
 /**
- * Search repositories.
- */
-function searchRepositories() {
-
-    const keyword = searchInput.value
-        .trim()
-        .toLowerCase();
-
-    const filtered = repositories.filter(repo =>
-        repo.name.toLowerCase().includes(keyword)
-    );
-
-    renderRepositories(filtered);
-}
-
-/**
- * Load repository index.
+ * Load repositories from repositories.json
  */
 async function loadRepositories() {
-
     try {
-
-        const response = await fetch(
-            "./repositories.json?t=" + Date.now(),
-            {
-                cache: "no-store"
-            }
-        );
+        const response = await fetch('./repositories.json?t=' + Date.now(), {
+            cache: 'no-store'
+        });
 
         if (!response.ok) {
-            throw new Error("Unable to load repository index");
+            throw new Error('Unable to load repository index');
         }
 
         const data = await response.json();
 
         if (!Array.isArray(data)) {
-            throw new Error("Invalid repository index");
+            throw new Error('Invalid repository index');
         }
 
-        repositories = data
-            .filter(repo =>
-                repo &&
-                typeof repo.name === "string" &&
-                typeof repo.url === "string" &&
-                isValidRepositoryUrl(repo.url)
-            )
-            .sort((a, b) =>
-                a.name.localeCompare(b.name)
-            );
+        // Sort by name
+        const sorted = data.sort((a, b) =>
+            (a.name || '').localeCompare(b.name || '')
+        );
 
-        repositoryCount.textContent =
-            repositories.length;
-
-        errorState.hidden = true;
-
-        searchRepositories();
+        renderRepositories(sorted);
 
     } catch (error) {
-
         console.error(error);
-
-        directory.replaceChildren();
-
-        repositoryCount.textContent = "--";
-
+        fileList.replaceChildren();
         emptyState.hidden = true;
         errorState.hidden = false;
     }
 }
 
-searchInput.addEventListener(
-    "input",
-    searchRepositories
-);
-
+// Load repositories on page load
 loadRepositories();

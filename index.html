@@ -4,138 +4,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <meta name="description" content="Garin Asset - Public GitHub Repository Directory">
-
-    <title>Garin Asset | Repository Directory</title>
-
+    <meta name="description" content="Downloads Directory - Garin Asset">
+    <title>downloads.garinasset.com</title>
     <link rel="stylesheet" href="./assets/css/style.css">
     <link rel="icon" href="data:,">
 </head>
 
-<body>
-
-    <div class="page-container">
-
+<body class="light" id="theme-root">
+    <div class="page-wrapper">
+        <!-- Header -->
         <header class="header">
-            <div class="brand">
-                <div class="brand-icon">G</div>
-
-                <div class="brand-info">
-                    <h1>Garin Asset</h1>
-                    <p>Repository Directory</p>
+            <div class="header-top">
+                <div class="brand">
+                    <h1 class="brand-text">downloads.garinasset.com</h1>
                 </div>
+
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme" title="Toggle Light/Dark Mode">
+                    <div class="theme-toggle-inner">
+                        <div class="theme-toggle-circle">💡</div>
+                    </div>
+                </button>
             </div>
 
-            <a
-                class="github-link"
-                href="https://github.com/garinasset"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                GitHub Profile
-                <span>↗</span>
-            </a>
+            <!-- Breadcrumb -->
+            <div class="breadcrumb-container">
+                <div class="breadcrumb">
+                    <span class="breadcrumb-item">Home</span>
+                </div>
+            </div>
         </header>
 
-        <main>
-
-            <section class="hero">
-                <div class="hero-label">
-                    <span class="status-dot"></span>
-                    PUBLIC REPOSITORIES
-                </div>
-
-                <h2>
-                    Explore my<br>
-                    <span>Repositories.</span>
-                </h2>
-
-                <p class="hero-description">
-                    A central directory of my public GitHub repositories.
-                    Each project maintains its own documentation and content.
-                </p>
-
-                <div class="repository-summary">
-                    <div class="summary-number" id="repository-count">
-                        --
-                    </div>
-
-                    <div class="summary-label">
-                        Public repositories
-                    </div>
-                </div>
-            </section>
-
-            <section class="directory-section">
-
-                <div class="section-heading">
-                    <div>
-                        <h3>Repository Index</h3>
-                        <p>Browse all public projects</p>
-                    </div>
-
-                    <div class="directory-tag">
-                        AUTO SYNC
+        <main class="main-content">
+            <!-- Directory Table -->
+            <div class="directory-container">
+                <div class="directory-header">
+                    <div class="header-row">
+                        <div class="col-icon"></div>
+                        <div class="col-name">Name</div>
+                        <div class="col-sha">SHA-256</div>
                     </div>
                 </div>
 
-                <div class="search-container">
-                    <span class="search-icon">⌕</span>
-
-                    <input
-                        type="search"
-                        id="repository-search"
-                        placeholder="Search repositories..."
-                        autocomplete="off"
-                        aria-label="Search repositories"
-                    >
+                <div id="file-list" class="file-list" aria-live="polite">
+                    <div class="loading">Loading...</div>
                 </div>
 
-                <div
-                    id="repository-directory"
-                    class="repository-grid"
-                    aria-live="polite"
-                >
-                    <div class="loading">
-                        Loading repositories...
-                    </div>
+                <div id="empty-state" class="empty-state" hidden>
+                    No items found.
                 </div>
 
-                <div
-                    id="empty-state"
-                    class="empty-state"
-                    hidden
-                >
-                    No repositories found.
+                <div id="error-state" class="error-state" hidden>
+                    Unable to load directory.
                 </div>
-
-                <div
-                    id="error-state"
-                    class="error-state"
-                    hidden
-                >
-                    Unable to load repositories.
-                    Please try again later.
-                </div>
-
-            </section>
-
+            </div>
         </main>
 
+        <!-- Footer -->
         <footer class="footer">
-            <div>
-                © <span id="current-year"></span> Garin Asset
-            </div>
-
-            <div>
-                Powered by GitHub Pages
-            </div>
+            <div>© <span id="current-year"></span> Garin Asset</div>
+            <div>Powered by GitHub Pages</div>
         </footer>
-
     </div>
 
     <script src="./assets/js/app.js"></script>
-
 </body>
 </html>

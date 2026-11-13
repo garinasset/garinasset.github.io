@@ -1,0 +1,117 @@
+name: Sync Repositories
+
+on:
+  push:
+    branches:
+      - main
+  
+  schedule:
+    # Run every 6 hours to keep the repository list fresh
+    - cron: '0 */6 * * *'
+  
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Generate repositories.json
+        run: |
+          node -e "
+          const https = require('https');
+          
+          function makeRequest(url) {
+            return new Promise((resolve, reject) => {
+              const req = https.get(url, {
+                headers: {
+                  'User-Agent': 'GitHub-Pages-Sync',
+                  'Accept': 'application/vnd.github.v3+json'
+                }
+              }, (res) => {
+                let data = '';
+                res.on('data', (chunk) => { data += chunk; });
+                res.on('end', () => {
+                  if (res.statusCode >= 400) {
+                    reject(new Error('HTTP \${res.statusCode}'));
+                  } else {
+                    resolve(JSON.parse(data));
+                  }
+                });
+              });
+              req.on('error', reject);
+            });
+          }
+          
+          async function getRepositories() {
+            const owner = 'garinasset';
+            const repos = [];
+            let page = 1;
+            let hasMore = true;
+            
+            while (hasMore) {
+              try {
+                const url = \`https://api.github.com/users/\${owner}/repos?type=public&page=\${page}&per_page=100&sort=updated&direction=desc\`;
+                const data = await makeRequest(url);
+                
+                if (!Array.isArray(data) || data.length === 0) {
+                  hasMore = false;
+                  break;
+                }
+                
+                for (const repo of data) {
+                  if (repo.has_pages) {
+                    repos.push({
+                      name: repo.name,
+                      url: repo.html_url,
+                      description: repo.description || ''
+                    });
+                  }
+                }
+                
+                page++;
+              } catch (error) {
+                console.error('Error fetching repositories:', error.message);
+                hasMore = false;
+              }
+            }
+            
+            return repos;
+          }
+          
+          getRepositories().then((repos) => {
+            const fs = require('fs');
+            fs.writeFileSync('repositories.json', JSON.stringify(repos, null, 2));
+            console.log(\`Generated repositories.json with \${repos.length} repositories\`);
+          }).catch((error) => {
+            console.error('Failed to generate repositories.json:', error);
+            process.exit(1);
+          });
+          "
+      
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          if git diff --quiet repositories.json 2>/dev/null; then
+            echo "No changes to repositories.json"
+          else
+            git add repositories.json
+            git commit -m "chore: sync repositories
+
+Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>" || true
+            git push
+          fi
