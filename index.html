@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="Garin Asset - Public GitHub Repository Directory">
+
+    <title>Garin Asset | Repository Directory</title>
+
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <link rel="icon" href="data:,">
+</head>
+
+<body>
+
+    <div class="page-container">
+
+        <header class="header">
+            <div class="brand">
+                <div class="brand-icon">G</div>
+
+                <div class="brand-info">
+                    <h1>Garin Asset</h1>
+                    <p>Repository Directory</p>
+                </div>
+            </div>
+
+            <a
+                class="github-link"
+                href="https://github.com/garinasset"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                GitHub Profile
+                <span>↗</span>
+            </a>
+        </header>
+
+        <main>
+
+            <section class="hero">
+                <div class="hero-label">
+                    <span class="status-dot"></span>
+                    PUBLIC REPOSITORIES
+                </div>
+
+                <h2>
+                    Explore my<br>
+                    <span>Repositories.</span>
+                </h2>
+
+                <p class="hero-description">
+                    A central directory of my public GitHub repositories.
+                    Each project maintains its own documentation and content.
+                </p>
+
+                <div class="repository-summary">
+                    <div class="summary-number" id="repository-count">
+                        --
+                    </div>
+
+                    <div class="summary-label">
+                        Public repositories
+                    </div>
+                </div>
+            </section>
+
+            <section class="directory-section">
+
+                <div class="section-heading">
+                    <div>
+                        <h3>Repository Index</h3>
+                        <p>Browse all public projects</p>
+                    </div>
+
+                    <div class="directory-tag">
+                        AUTO SYNC
+                    </div>
+                </div>
+
+                <div class="search-container">
+                    <span class="search-icon">⌕</span>
+
+                    <input
+                        type="search"
+                        id="repository-search"
+                        placeholder="Search repositories..."
+                        autocomplete="off"
+                        aria-label="Search repositories"
+                    >
+                </div>
+
+                <div
+                    id="repository-directory"
+                    class="repository-grid"
+                    aria-live="polite"
+                >
+                    <div class="loading">
+                        Loading repositories...
+                    </div>
+                </div>
+
+                <div
+                    id="empty-state"
+                    class="empty-state"
+                    hidden
+                >
+                    No repositories found.
+                </div>
+
+                <div
+                    id="error-state"
+                    class="error-state"
+                    hidden
+                >
+                    Unable to load repositories.
+                    Please try again later.
+                </div>
+
+            </section>
+
+        </main>
+
+        <footer class="footer">
+            <div>
+                © <span id="current-year"></span> Garin Asset
+            </div>
+
+            <div>
+                Powered by GitHub Pages
+            </div>
+        </footer>
+
+    </div>
+
+    <script src="./assets/js/app.js"></script>
+
+</body>
+</html>
