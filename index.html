@@ -10,12 +10,12 @@
         href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;500&family=Work+Sans:wght@400;500;600&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     <link rel="stylesheet" href="./assets/css/style.css">
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
-    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" sizes="any">
-    <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/x-icon" href="./favicon.ico" sizes="16x16 32x32 48x48">
+    <link rel="icon" type="image/png" href="./favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" sizes="any">
+    <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="./apple-touch-icon.png">
     <meta name="apple-mobile-web-app-title" content="下载中心" />
-    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="manifest" href="./site.webmanifest" />
     <script src="./assets/js/app.js" defer></script>
 </head>
 
@@ -52,12 +52,16 @@
                     <div class="col-size">Size</div>
                     <div class="col-sha">SHA-256</div>
                 </div>
-                <ul id="file-list" class="file-list" aria-label="Repository directories"></ul>
-                <p id="loading-state" class="status" role="status">Loading repositories...</p>
-                <p id="empty-state" class="status" role="status" hidden>No public Pages repositories found.</p>
-                <p id="error-state" class="status error-state" role="alert" hidden>
-                    Unable to load the repository directory. Please reload to try again.
-                </p>
+                <ul class="file-list" aria-label="Repository directories">
+                    <li>
+                        <a class="file-link" href="./updns/">
+                            <i class="fa-solid fa-folder file-icon" aria-hidden="true"></i>
+                            <span class="col-name" title="updns">updns</span>
+                            <span class="col-size">&mdash;</span>
+                            <span class="col-sha">&mdash;</span>
+                        </a>
+                    </li>
+                </ul>
             </section>
         </main>
 

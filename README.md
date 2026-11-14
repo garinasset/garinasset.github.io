@@ -1,9 +1,7 @@
 # downloads.garinasset.com
 
-A static homepage listing manually configured project directories.
-The homepage repository `garinasset.github.io` is excluded. Repository contents
-are not crawled. Every directory links to
-`https://downloads.garinasset.com/{repository-name}/`.
+A static homepage with project directories written directly in HTML.
+Repository contents are not crawled. Directory links use relative paths.
 
 ## Interface
 
@@ -20,21 +18,12 @@ are not crawled. Every directory links to
 
 ## Directory configuration
 
-Edit [repositories.json](repositories.json) to manage the displayed directories.
-Currently it contains only:
+Edit the `.file-list` in [index.html](index.html) to manage directories.
+Currently it contains only `updns`, linking to `./updns/`.
 
-```json
-[
-  {
-    "name": "updns"
-  }
-]
-```
-
-Each entry's `name` is both the displayed directory name and the URL path.
-Names may contain letters, numbers, dots, underscores, and hyphens, but cannot
-be `.` or `..`. Entries are sorted by name; the homepage repository remains
-excluded. There is no automatic repository scanning or GitHub API request.
+The directory is visible without JavaScript. [app.js](assets/js/app.js) only
+handles theme switching and persistence. There is no JSON configuration,
+automatic repository scanning, or GitHub API request.
 
 ## Deployment
 
@@ -44,8 +33,8 @@ environment permitted to deploy from `main`.
 
 The single [deployment workflow](.github/workflows/deploy.yml) runs on pushes to
 `main` and manually via **Actions > Deploy Website > Run workflow**.
-It copies the configured JSON unchanged alongside the website and uploads only
-the built site. There is no scheduled synchronization or data generation.
+It copies the static website and uploads only the built site.
+There is no scheduled synchronization or data generation.
 The published root includes ICO, SVG, and PNG favicons, the Apple touch icon,
 and the web manifest with both of its PNG icons. HTML declares their formats
 and sizes; browsers choose the supported favicon without a prefetch hint.
@@ -59,9 +48,9 @@ This homepage creates links only; it does not deploy or proxy the project websit
 python3 -m http.server 8080 --bind 127.0.0.1
 ```
 
-Open <http://127.0.0.1:8080/> rather than opening the HTML as a file, so the browser
-can fetch the JSON index. Directory links intentionally target the real domain.
-Local preview and deployment use the same checked-in JSON configuration.
+Open <http://127.0.0.1:8080/>. Directory links resolve against the current
+page URL, so `./updns/` targets the local server during preview and the
+custom domain in production. Project content must be served separately.
 
 ## Tests
 
