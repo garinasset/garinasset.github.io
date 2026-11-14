@@ -11,6 +11,7 @@ Repository contents are not crawled. Directory links use relative paths.
 - Name, Size, and SHA-256 columns; directories show an em dash for Size and SHA-256.
 - All three columns remain visible on mobile, with compact spacing and text.
 - Theme preference persists in localStorage; switching still works if storage is blocked.
+- Browser theme color follows the header when the page theme changes, where supported.
 - Fonts load from Google Fonts; icons load from the pinned Font Awesome CDN stylesheet.
 - The footer says "Inspired by Directory Lister" because this site uses GitHub Pages,
   not the Directory Lister application. GitHub links to `garinasset`; the other

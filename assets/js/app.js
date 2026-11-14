@@ -1,11 +1,14 @@
 const themeRoot = document.getElementById('theme-root');
 const themeToggle = document.getElementById('theme-toggle');
+const themeColor = document.querySelector('meta[name="theme-color"]');
+const header = document.querySelector('.header');
 const THEME_KEY = 'theme-preference';
 
 function applyTheme(theme) {
     themeRoot.classList.toggle('dark', theme === 'dark');
     themeRoot.classList.toggle('light', theme !== 'dark');
     themeToggle.setAttribute('aria-pressed', String(theme === 'dark'));
+    themeColor.setAttribute('content', getComputedStyle(header).backgroundColor);
 }
 
 try {
