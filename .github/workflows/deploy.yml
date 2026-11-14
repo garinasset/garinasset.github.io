@@ -3,8 +3,6 @@ name: Deploy Website
 on:
   push:
     branches: [main]
-  schedule:
-    - cron: '0 */6 * * *'
   workflow_dispatch:
 
 permissions:
@@ -26,27 +24,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-
-      - name: Test repository discovery
-        run: node --test .github/scripts/build-index.test.mjs
-
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
-      - name: Build website and discover public Pages repositories
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Build website
         run: |
           mkdir -p _site
-          cp index.html CNAME _site/
+          cp index.html CNAME repositories.json _site/
           cp favicon.ico favicon.svg favicon-96x96.png apple-touch-icon.png \
             site.webmanifest web-app-manifest-192x192.png web-app-manifest-512x512.png _site/
           cp -R assets _site/assets
-          node .github/scripts/build-index.mjs _site/repositories.json
 
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v4
